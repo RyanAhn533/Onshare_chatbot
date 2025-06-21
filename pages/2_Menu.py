@@ -1,4 +1,3 @@
-# pages/2_Menu.py
 import streamlit as st
 from utils.ui import multiselect_by_image, speak
 from pathlib import Path
