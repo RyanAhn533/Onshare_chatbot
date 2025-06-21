@@ -1,0 +1,5 @@
+streamlit==1.33.0   # 웹앱 프레임워크
+Pillow               # 이미지 읽기용 (Streamlit 내부에서도 씀)
+# GPT 챗봇을 쓰려면 ↓ 두 줄 추가
+openai>=1.30.0
+python-dotenv        # .env 파일 쓸 경우
