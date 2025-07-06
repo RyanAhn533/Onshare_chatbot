@@ -80,9 +80,9 @@ def on_stop(_):
 
 # ── AAC 버튼 세트 ─────────────────────────────────────────
 controls = {
-    "시작": (Path("data/aac_controls/start.png"),  on_start),
-    "다음": (Path("data/aac_controls/next.png"),   on_next),
-    "다시": (Path("data/aac_controls/again.png"),  on_again),
+    "시작": (Path("data/aac_controls/start-button.png"),  on_start),
+    "다음": (Path("data/aac_controls/다음.png"),   on_next),
+    "다시": (Path("data/aac_controls/again_button.png"),  on_again),
     "그만": (Path("data/aac_controls/stop.png"),   on_stop),
 }
 aac_control_panel(
