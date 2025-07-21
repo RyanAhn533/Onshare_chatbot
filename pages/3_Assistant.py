@@ -27,15 +27,19 @@ def fetch_recipe():
     prompt = (
         context
         + "위 정보를 참고해 쉬운 한국어로 요리 과정을 한 문장씩 나눠 주세요. "
-          "각 문장은 ①, ② 처럼 번호만 붙이고, 15단계 이하로 해 주세요. "
-          "불필요한 인삿말 없이 과정만 주세요."
+        "각 문장은 ①, ② 처럼 번호만 붙이고, 15단계 이하로 해 주세요. "
+        "계량 단위는 '아빠 숟가락(큰 숟가락)' 또는 '애기 숟가락(작은 숟가락)'을 써 주세요. "
+        "불필요한 인삿말 없이 과정만 주세요."
     )
+
     msgs = [
         {"role": "system",
-         "content": "당신은 발달장애인을 돕는 초등학교 선생님입니다. "
-                    "항상 짧고 쉬운 문장으로 요리 단계를 설명하세요."},
+        "content": "당신은 발달장애인을 돕는 초등학교 선생님입니다. "
+                    "항상 짧고 쉬운 문장으로 요리 단계를 설명하세요. "
+                    "문장은 한 단계씩 번호로 나눠 주세요."},
         {"role": "user", "content": prompt},
     ]
+
     raw = ask_gpt(msgs)
     # 번호·줄바꿈 기준으로 단계 리스트 추출
     steps = [s.lstrip("①②③④⑤⑥⑦⑧⑨⑩⓫⓬⓭⓮⓯ ").strip()
@@ -80,9 +84,9 @@ def on_stop(_):
 
 # ── AAC 버튼 세트 ─────────────────────────────────────────
 controls = {
-    "시작": (Path("data/aac_controls/start-button.png"),  on_start),
-    "다음": (Path("data/aac_controls/다음.png"),   on_next),
-    "다시": (Path("data/aac_controls/again_button.png"),  on_again),
+    "시작": (Path("data/aac_controls/start.png"),  on_start),
+    "다음": (Path("data/aac_controls/next.png"),   on_next),
+    "다시": (Path("data/aac_controls/again.png"),  on_again),
     "그만": (Path("data/aac_controls/stop.png"),   on_stop),
 }
 aac_control_panel(
