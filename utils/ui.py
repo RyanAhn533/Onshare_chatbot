@@ -21,31 +21,39 @@ def speak(text: str):
     )
 
 # ── 공통 이미지-버튼 위젯 (라디오/토글) ─────────────────────
-def multiselect_by_image(label: str, options: dict[str, Path]):
-    """여러 장 중 ‘여러 개’를 토글 선택"""
+def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 5):
+    """이미지 토글 다중 선택 – 줄바꿈 되도록 수정"""
     st.write(f"#### {label}")
-    cols = st.columns(len(options))
     states = {}
 
-    for col, (name, img) in zip(cols, options.items()):
-        key = f"sel_{name}"
-        if key not in st.session_state:
-            st.session_state[key] = False
+    keys = list(options.keys())
 
-        if col.button("", key=f"btn_{name}"):
-            st.session_state[key] = not st.session_state[key]
-            speak(f"{name} {'선택' if st.session_state[key] else '해제'}")
+    for i in range(0, len(keys), per_row):
+        row_keys = keys[i:i + per_row]
+        cols = st.columns(len(row_keys))
 
-        border = "5px solid #ff8c00" if st.session_state[key] else "1px solid #ccc"
-        col.markdown(
-            f"<img src='data:image/png;base64,{_b64_png(img)}' "
-            f"style='width:100%;padding:4px;border:{border};border-radius:12px;' title='{name}'>",
-            unsafe_allow_html=True,
-        )
-        col.caption(name)
-        states[name] = st.session_state[key]
+        for col, name in zip(cols, row_keys):
+            img = options[name]
+            key = f"sel_{name}"
+
+            if key not in st.session_state:
+                st.session_state[key] = False
+
+            if col.button("", key=f"btn_{name}"):
+                st.session_state[key] = not st.session_state[key]
+                speak(f"{name} {'선택' if st.session_state[key] else '해제'}")
+
+            border = "5px solid #ff8c00" if st.session_state[key] else "1px solid #ccc"
+            col.markdown(
+                f"<img src='data:image/png;base64,{_b64_png(img)}' "
+                f"style='width:100%;padding:4px;border:{border};border-radius:12px;' title='{name}'>",
+                unsafe_allow_html=True,
+            )
+            col.caption(name)
+            states[name] = st.session_state[key]
 
     return [k for k, v in states.items() if v]
+
 
 
 def select_one_by_image(label: str, options: dict[str, Path]):
