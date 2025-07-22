@@ -1,8 +1,10 @@
+## 재료 고르기
 import streamlit as st
 from utils.ui import multiselect_by_image, speak
 from pathlib import Path
 
 st.set_page_config(page_title="② 재료 선택", page_icon="🥕")
+
 speak("집에 있는 재료를 모두 골라 주세요.")
 
 ing_imgs = {p.stem: p for p in Path("data/ingredients").glob("*.png")}
