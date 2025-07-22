@@ -46,5 +46,5 @@ with col2:
         else:
             st.session_state["hand_status"] = hand_status
             st.session_state["selected_tools"] = selected_tools or ["없음"]
-            switch_page("1_Ingredients")   # 실제 파일명으로 이동
+            switch_page("1_재료선택")   # 실제 파일명으로 이동
 #asd
