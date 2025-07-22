@@ -36,7 +36,7 @@ EASY_MAP = {
     "캄필로박터": "식중독균",
 }
 
-STEP_PREFIX_RE = re.compile(r"^\s*[①-⓯\d\.\(\)]\s*")
+STEP_PREFIX_RE = re.compile(r"^\s*[①-⓯\d\\(\)]\s*")
 
 def _apply_easy_words(text: str) -> str:
     for hard, easy in EASY_MAP.items():
