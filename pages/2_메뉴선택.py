@@ -1,6 +1,6 @@
-## 요리 메뉴 선택
+## 메뉴 선택
 import streamlit as st
-from utils.ui import select_one_by_image, speak
+from utils.ui import multiselect_by_image, speak
 from pathlib import Path
 
 # ── 페이지 설정 ──
@@ -17,17 +17,13 @@ st.markdown("""
 st.subheader("③ 먹고 싶은 요리를 골라주세요!")
 
 # 음성 안내
-speak("먹고 싶은 요리를 한 가지 골라 주세요.")
+speak("오늘 만들 메뉴를 하나 골라 주세요.")
 
 # ── 요리 이미지 목록 불러오기 ──
-menu_imgs = {p.stem: p for p in Path("data/menus").glob("*.png")}
-menu = select_one_by_image("어떤 요리를 만들고 싶나요?", menu_imgs)
+menu_imgs = {p.stem: p for p in Path("data/menu").glob("*.png")}
+menu = multiselect_by_image("메뉴를 선택하세요 (1개)", menu_imgs)
 
 # ── 다음 단계 버튼 ──
-if st.button("요리 시작하기 ▶️"):
-    if menu is None:
-        st.warning("원하는 요리를 먼저 골라 주세요.")
-        speak("요리를 먼저 골라 주세요.")
-    else:
-        st.session_state["menu"] = menu
-        st.switch_page("pages/3_만드는방법.py")  # 다음 단계 파일명에 맞게 수정
+if menu and st.button("요리 시작하기 ▶️"):
+    st.session_state["menu"] = menu[0]
+    st.switch_page("pages/3_만드는방법.py")
