@@ -22,7 +22,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def ask_gpt(messages: List[Dict[str, str]],
-            model: str = "gpt-3.5-turbo",
+            model: str = "gpt-4.0",
             temperature: float = 0.3,
             max_tokens: int = 400) -> str:
     """
