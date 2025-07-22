@@ -26,4 +26,4 @@ selected_ings = multiselect_by_image("재료를 선택하세요", ing_imgs)
 # ── 다음 단계 버튼 ──
 if st.button("다음 단계로 ➡️"):
     st.session_state["selected_ingredients"] = selected_ings or ["없음"]
-    st.switch_page("pages/2_Menu.py")
+    st.switch_page("pages/2_메뉴선택.py")
