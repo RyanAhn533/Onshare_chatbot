@@ -18,7 +18,7 @@ speak("선택한 재료로 만들 수 있는 메뉴를 추천할게요.")
 # ── 사용자 선택 재료 가져오기 ──
 user_ingredients = set(st.session_state.get("selected_ingredients", []))
 
-# ── 메뉴 후보 목록 (menu_db) ──
+# ── 1단계: 메뉴 데이터베이스 그대로 유지 ──
 menu_db = {
     "간장계란밥": {"필수재료": ["계란", "밥", "간장"], "추천재료": ["참기름", "김가루"]},
     "계란후라이": {"필수재료": ["계란", "기름"], "추천재료": ["소금", "버터"]},
@@ -30,32 +30,27 @@ menu_db = {
     "햄버거": {"필수재료": ["햄버거빵", "패티"], "추천재료": ["양상추", "치즈", "토마토", "양파", "케찹"]}
 }
 
-# ── 1단계: 후보 메뉴 필터링 ──
-candidate_menus = []
-for menu_name, info in menu_db.items():
-    if set(info["필수재료"]).issubset(user_ingredients):
-        candidate_menus.append(menu_name)
+# ── 2단계: GPT 프롬프트 구성 ──
+gpt_prompt = f"""
+너는 발달장애인을 위한 요리 추천 도우미야.
 
-# ── 2단계: GPT에게 추천 요청 ──
-if candidate_menus:
-    gpt_prompt = f"""
-사용자 재료: {', '.join(user_ingredients)}
-후보 메뉴: {', '.join(candidate_menus)}
+다음은 메뉴별 필수 재료와 추천 재료야:
+{menu_db}
 
-위 후보 중에서 가장 만들기 쉬운 메뉴 1가지를 골라주세요.
-'추천 메뉴: 메뉴이름' 형식으로 딱 한 줄만 출력해주세요.
-"""
-else:
-    gpt_prompt = f"""
-사용자 재료: {', '.join(user_ingredients)}
+사용자가 가지고 있는 재료는 다음과 같아:
+{user_ingredients}
 
-이 재료들로 만들 수 있는 간단한 요리 하나를 추천해주세요.
-추천 메뉴 이름만 출력해주세요. 예: 추천 메뉴: 계란국
+이 재료들로 만들 수 있는 메뉴를 추론해줘.
+꼭 모든 필수재료가 없어도 괜찮아. 중요한 재료가 포함되어 있으면 충분히 추천해도 돼.
+예를 들어, 닭과 마늘만 있어도 삼계탕을 추천해도 돼.
+
+가장 만들기 쉬운 메뉴 하나만 추천해줘.
+형식: 추천 메뉴: 메뉴이름
 """
 
-# ── GPT 호출 ──
+# ── 3단계: GPT에게 요청 ──
 response = ask_gpt([
-    {"role": "system", "content": "당신은 요리 추천 도우미입니다."},
+    {"role": "system", "content": "너는 발달장애인을 위한 요리 추천 선생님이야. 항상 친절하게 단순하게 알려줘."},
     {"role": "user", "content": gpt_prompt}
 ])
 
@@ -76,4 +71,4 @@ selected = select_one_by_image("마음에 드는 메뉴를 하나 선택하세�
 
 if selected and st.button("요리 시작 ▶️"):
     st.session_state["menu"] = selected
-    st.switch_page("pages/3_Assistant.py")
+    st.switch_page("pages/3_만드는방법.py")
