@@ -25,43 +25,32 @@ def speak(text: str):
 
 def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     st.write(f"#### {label}")
-    
-    # 세션 상태 초기화
-    if 'multi_image_selection' not in st.session_state:
-        st.session_state.multi_image_selection = set()
 
-    selected_keys = st.session_state.multi_image_selection
+    # 세션 초기화
+    if "image_select_multi" not in st.session_state:
+        st.session_state.image_select_multi = set()
 
+    selected = st.session_state.image_select_multi
     keys = list(options.keys())
+
     for i in range(0, len(keys), per_row):
         row_keys = keys[i:i + per_row]
         cols = st.columns(per_row)
 
         for j, key in enumerate(row_keys):
             with cols[j]:
-                image_path = options[key]
-                button_key = f"{label}_{key}_btn"
-
-                # 이미지 위에 버튼을 투명하게 덮어서 이미지 클릭 시 선택되도록 처리
-                clicked = st.button(
-                    label=" ",  # 버튼 텍스트 없음
-                    key=button_key,
-                    help=key
-                )
-                st.image(str(image_path), caption=key, use_container_width=True)
-
-                # 클릭되었을 때 상태 토글
-                if clicked:
-                    if key in selected_keys:
-                        selected_keys.remove(key)
+                # 하나의 이미지 선택 UI처럼 구성
+                is_selected = key in selected
+                # 버튼처럼 동작: 클릭하면 상태 토글
+                if st.button(f"✅ {key}" if is_selected else key, key=f"btn_{key}"):
+                    if is_selected:
+                        selected.remove(key)
                     else:
-                        selected_keys.add(key)
+                        selected.add(key)
+                # 이미지 출력
+                st.image(str(options[key]), use_container_width=True)
 
-                # 선택된 경우 강조
-                if key in selected_keys:
-                    st.markdown(f"<div style='text-align:center; color:green;'>✅ 선택됨</div>", unsafe_allow_html=True)
-
-    return list(selected_keys)
+    return list(selected)
 
 
 # ── 단일 선택: image_select 기본 사용 ──────────────────────────────
