@@ -38,38 +38,34 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
                 img_path = options[name]
                 key = f"sel_{name}"
 
-                # 선택 상태 초기화
                 if key not in st.session_state:
                     st.session_state[key] = False
 
                 is_selected = st.session_state[key]
                 border = "4px solid #ff8c00" if is_selected else "2px solid #ccc"
+                b64_img = base64.b64encode(img_path.read_bytes()).decode()
 
-                html = f"""
-                <div style="position:relative; text-align:center; margin-bottom:8px;">
-                    <img src="data:image/png;base64,{_b64_png(img_path)}"
-                         style="width:100%; border-radius:12px; border:{border};">
-                    <form method="post">
-                        <input type="submit" name="{key}" value=""
-                            style="position:absolute;top:0;left:0;width:100%;height:100%;
-                                   opacity:0;cursor:pointer;border:none;">
-                    </form>
-                    <div style="margin-top:6px; font-weight:bold; font-size:1.05rem;">{name}</div>
-                </div>
-                """
+                # 👉 진짜 버튼 대신 HTML 내부 버튼처럼 표현하고, 클릭은 st.button으로 처리
+                if col.button("", key=f"btn_{name}"):
+                    st.session_state[key] = not is_selected
 
-                with col.form(key=f"form_{key}"):
-                    submitted = st.form_submit_button("")
-                    if submitted:
-                        st.session_state[key] = not is_selected
+                # 버튼 아래 이미지 삽입 (버튼을 '위에 빈칸'처럼 보이게)
+                col.markdown(
+                    f"""
+                    <div style='text-align:center;'>
+                        <img src='data:image/png;base64,{b64_img}'
+                             style='width:100%; border-radius:12px; border:{border};'>
+                        <div style='margin-top:6px; font-weight:bold; font-size:1.1rem;'>{name}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-                col.markdown(html, unsafe_allow_html=True)
                 selected[name] = st.session_state[key]
             else:
                 col.markdown("&nbsp;")
 
     return [k for k, v in selected.items() if v]
-
 
 
 def select_one_by_image(label: str, options: dict[str, Path]):
