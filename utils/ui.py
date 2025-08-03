@@ -25,7 +25,12 @@ def speak(text: str):
 
 def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     st.write(f"#### {label}")
-    selected = []
+    
+    # 세션 상태 초기화
+    if 'multi_image_selection' not in st.session_state:
+        st.session_state.multi_image_selection = set()
+
+    selected_keys = st.session_state.multi_image_selection
 
     keys = list(options.keys())
     for i in range(0, len(keys), per_row):
@@ -34,11 +39,29 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
 
         for j, key in enumerate(row_keys):
             with cols[j]:
-                st.image(str(options[key]), use_container_width=True)
-                if st.checkbox(f"{key}", key=f"{label}_{key}"):
-                    selected.append(key)
+                image_path = options[key]
+                button_key = f"{label}_{key}_btn"
 
-    return selected
+                # 이미지 위에 버튼을 투명하게 덮어서 이미지 클릭 시 선택되도록 처리
+                clicked = st.button(
+                    label=" ",  # 버튼 텍스트 없음
+                    key=button_key,
+                    help=key
+                )
+                st.image(str(image_path), caption=key, use_container_width=True)
+
+                # 클릭되었을 때 상태 토글
+                if clicked:
+                    if key in selected_keys:
+                        selected_keys.remove(key)
+                    else:
+                        selected_keys.add(key)
+
+                # 선택된 경우 강조
+                if key in selected_keys:
+                    st.markdown(f"<div style='text-align:center; color:green;'>✅ 선택됨</div>", unsafe_allow_html=True)
+
+    return list(selected_keys)
 
 
 # ── 단일 선택: image_select 기본 사용 ──────────────────────────────
