@@ -1,8 +1,6 @@
-# pages/3_메뉴선택.py
-
 import streamlit as st
 from pathlib import Path
-from utils.ui import multiselect_by_image, speak
+from utils.ui import select_one_by_image, speak
 from utils.gpt_helper import ask_gpt
 
 # ── 페이지 설정 ──────────────────────────────
@@ -63,10 +61,10 @@ st.markdown(gpt_response)
 # ── 메뉴 이미지 선택 UI ──────────────────────
 st.markdown("#### 🍽️ 이미지로 메뉴를 선택하세요")
 menu_imgs = {p.stem: p for p in Path("data/menu").glob("*.png")}
-menu = multiselect_by_image("메뉴를 선택하세요 (1개)", menu_imgs)
+menu = select_one_by_image("메뉴를 선택하세요", menu_imgs)
 
 # ── 다음 페이지 이동 ─────────────────────────
 if menu and st.button("요리 시작하기 ▶️"):
-    st.session_state["menu"] = menu[0]
+    st.session_state["menu"] = menu
     st.session_state["gpt_response"] = gpt_response
     st.switch_page("pages/3_만드는방법.py")

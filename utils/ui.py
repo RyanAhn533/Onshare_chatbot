@@ -53,7 +53,7 @@ def select_one_by_image(label: str, options: dict[str, Path]):
         label="",
         images=[str(p) for p in paths],
         captions=captions,
-        use_container_width=True
+        image_size=(200, 200),  # 👈 여기서 크기 고정 (원본 비율 유지하려면 height만 지정하거나 auto도 가능)
     )
 
     if selected_path:
@@ -76,7 +76,7 @@ def aac_control_panel(controls: dict[str, tuple[Path, str]], callback):
         label="",
         images=images,
         captions=captions,
-        use_container_width=True
+        image_size=(160, 160),  # 👈 필요에 따라 크기 조정
     )
 
     if selected_path:
