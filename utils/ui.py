@@ -50,11 +50,12 @@ def select_one_by_image(label: str, options: dict[str, Path]):
     captions = list(options.keys())
 
     selected_path = image_select(
-        label="",
-        images=[str(p) for p in paths],
-        captions=captions,
-        image_size=(200, 200),  # 👈 여기서 크기 고정 (원본 비율 유지하려면 height만 지정하거나 auto도 가능)
-    )
+    label="",
+    images=[str(p) for p in paths],
+    captions=captions,
+    image_size="auto"  # 또는 image_size=180
+)
+
 
     if selected_path:
         name = captions[paths.index(Path(selected_path))]
