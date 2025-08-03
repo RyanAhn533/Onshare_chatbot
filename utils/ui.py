@@ -35,6 +35,7 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
                 name = row_keys[j]
                 img_path = options[name]
                 key = f"sel_{name}"
+                btn_key = f"btn_{name}"
 
                 if key not in st.session_state:
                     st.session_state[key] = False
@@ -43,19 +44,27 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
                 border = "4px solid #ff8c00" if is_selected else "2px solid #ccc"
                 b64_img = base64.b64encode(img_path.read_bytes()).decode()
 
-                if col.button("", key=f"btn_{name}"):
-                    st.session_state[key] = not is_selected
-
-                col.markdown(
-                    f"""
-                    <div style='text-align:center;'>
-                        <img src='data:image/png;base64,{b64_img}'
-                             style='width:100%; border-radius:12px; border:{border};'>
-                        <div style='margin-top:6px; font-weight:bold; font-size:1.1rem;'>{name}</div>
+                # 버튼 + 이미지 HTML 묶기
+                col.markdown(f"""
+                <div style="position:relative; width:100%; text-align:center; margin-bottom:8px;">
+                    <img src="data:image/png;base64,{b64_img}"
+                         style="width:100%; border-radius:12px; border:{border};">
+                    <div style="position:absolute; top:0; left:0; width:100%; height:100%;">
+                        <form action="" method="post">
+                            <button name="{btn_key}" type="submit"
+                                style="width:100%; height:100%; opacity:0;
+                                       cursor:pointer; border:none; background:none;">
+                            </button>
+                        </form>
                     </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                    <div style="margin-top:6px; font-weight:bold; font-size:1.1rem;">{name}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                # 처리: 버튼 눌렸는지 확인
+                submitted = st.session_state.get(btn_key)
+                if st.experimental_get_query_params().get(btn_key):
+                    st.session_state[key] = not is_selected
 
                 selected[name] = st.session_state[key]
             else:
@@ -71,28 +80,36 @@ def select_one_by_image(label: str, options: dict[str, Path]):
 
     for col, (name, img_path) in zip(cols, options.items()):
         key = f"_single_{label}_{name}"
+        main_key = f"_single_{label}"
 
         is_selected = (choice == name)
         border = "5px solid #ff8c00" if is_selected else "1px solid #ccc"
         b64_img = base64.b64encode(img_path.read_bytes()).decode()
 
-        if col.button("", key=key):
+        # 버튼: 숨기고 클릭만 처리
+        if col.button(" ", key=key):
             choice = name
-            st.session_state[f"_single_{label}"] = name
+            st.session_state[main_key] = name
             speak(f"{name} 선택")
 
-        col.markdown(
-            f"""
-            <div style='text-align:center;'>
-                <img src='data:image/png;base64,{b64_img}'
-                     style='width:100%; border-radius:12px; border:{border};'>
-                <div style='margin-top:6px; font-weight:bold; font-size:1.1rem;'>{name}</div>
+        # 버튼 위에 이미지 덮기 + 버튼 숨기기
+        col.markdown(f"""
+            <style>
+                [data-testid="baseButton-{key}"] {{
+                    display: none !important;
+                }}
+            </style>
+            <div style='position:relative; text-align:center; margin-bottom:8px;'>
+                <label for="{key}">
+                    <img src='data:image/png;base64,{b64_img}'
+                         style='width:100%; border-radius:12px; border:{border}; cursor:pointer;'>
+                    <div style='margin-top:6px; font-weight:bold; font-size:1.1rem;'>{name}</div>
+                </label>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+        """, unsafe_allow_html=True)
 
-    return choice
+    return st.session_state.get(f"_single_{label}", None)
+
 
 # ── Assistant 전용 : 제어(AAC) 버튼 묶음 ──────────────────
 def aac_control_panel(controls: dict[str, tuple[Path, str]], callback):
