@@ -13,6 +13,7 @@ pandas==2.3.0
 requests==2.32.3
 tenacity==9.1.2
 tornado==6.5.1
+streamlit-image-select==0.6.0
 # ───────────────────────────────────────────────
 # 옵션/부가 기능 (필요할 때만 주석 해제)
 # st-annotated-text==4.0.2
