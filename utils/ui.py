@@ -50,18 +50,18 @@ def select_one_by_image(label: str, options: dict[str, Path]):
     captions = list(options.keys())
 
     selected_path = image_select(
-    label="",
-    images=[str(p) for p in paths],
-    captions=captions,
-    image_size="auto"  # 또는 image_size=180
-)
-
+        label="",
+        images=[str(p) for p in paths],
+        captions=captions,
+        image_size=180  # ✅ 여기만 고치면 해결됨
+    )
 
     if selected_path:
         name = captions[paths.index(Path(selected_path))]
         speak(f"{name} 선택")
         return name
     return None
+
 
 
 # ── 제어 패널: 단일 선택처럼 사용 후 콜백 호출 ───────────────────────
