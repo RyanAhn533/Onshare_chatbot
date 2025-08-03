@@ -41,7 +41,7 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
     return selected
 
 
-# ── 단일 선택: image_select 간단 사용 ──────────────────────────────
+# ── 단일 선택: image_select 기본 사용 ──────────────────────────────
 
 def select_one_by_image(label: str, options: dict[str, Path]):
     st.write(f"#### {label}")
@@ -53,7 +53,6 @@ def select_one_by_image(label: str, options: dict[str, Path]):
         label="",
         images=[str(p) for p in paths],
         captions=captions,
-        image_size=180  # ✅ 여기만 고치면 해결됨
     )
 
     if selected_path:
@@ -61,7 +60,6 @@ def select_one_by_image(label: str, options: dict[str, Path]):
         speak(f"{name} 선택")
         return name
     return None
-
 
 
 # ── 제어 패널: 단일 선택처럼 사용 후 콜백 호출 ───────────────────────
@@ -77,7 +75,6 @@ def aac_control_panel(controls: dict[str, tuple[Path, str]], callback):
         label="",
         images=images,
         captions=captions,
-        image_size=(160, 160),  # 👈 필요에 따라 크기 조정
     )
 
     if selected_path:
