@@ -1,36 +1,54 @@
 import streamlit as st
-from utils.ui import multiselect_by_image, select_one_by_image, speak
 from pathlib import Path
+from clickable_image_component.clickable_image.clickable_image import clickable_image_selector
 
-# ── Streamlit 1.35+ 내장 페이지 전환 래퍼 ──
+# ── 페이지 전환 래퍼 ─────────────────────────────────────────
 def switch_page(page: str):
     if not page.endswith(".py"):
         page += ".py"
     if not page.startswith("pages/"):
         page = f"pages/{page}"
     st.switch_page(page)
-# ────────────────────────────────────────────
 
+# ── TTS 유틸 ────────────────────────────────────────────────
+def speak(text: str):
+    st.components.v1.html(
+        f"""
+        <script>
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.speak(
+            new SpeechSynthesisUtterance("{text}")
+          );
+        </script>
+        """,
+        height=0,
+    )
+
+# ── 페이지 설정 ────────────────────────────────────────────
 st.set_page_config(page_title="① 손 씻기 & 도구", page_icon="🍳")
 
-# ✅ 최상단 제목
-st.markdown("<h1 style='text-align: center; margin-top: -40px;'>🍳 요리용 챗봇 온쿡</h1>", unsafe_allow_html=True)
-
+# ── 헤더 ───────────────────────────────────────────────────
+st.markdown(
+    "<h1 style='text-align: center; margin-top: -40px;'>🍳 요리용 챗봇 온쿡</h1>",
+    unsafe_allow_html=True,
+)
 speak("손을 씻었는지 먼저 알려 주시고, 사용할 도구 그림을 눌러 주세요.")
 
-# 1) 손 씻음 여부
+# ── 1) 손 씻음 여부(단일) ──────────────────────────────────
 hand_imgs = {
-    "손 깨끗해요": Path("data/hand/clean.png"),
-    "손 더러워요": Path("data/hand/dirty.png"),
+    "손 깨끗해요": "data/hand/clean.png",
+    "손 더러워요": "data/hand/dirty.png",
 }
-hand_status = select_one_by_image("손을 씻었나요?", hand_imgs)
+hand_choice = clickable_image_selector(hand_imgs)     # 리스트로 리턴
+hand_status = hand_choice[0] if hand_choice else None
 
-# 2) 준비된 도구
-tool_imgs = {p.stem: p for p in Path("data/tools").glob("*.png")}
-selected_tools = multiselect_by_image("사용할 도구를 골라 주세요", tool_imgs)
+# ── 2) 준비된 도구(다중) ───────────────────────────────────
+tool_imgs = {p.stem: str(p) for p in Path("data/tools").glob("*.png")}
+selected_tools = clickable_image_selector(tool_imgs)  # 리스트 그대로
 
-# 3) 버튼
+# ── 3) 네비게이션 버튼 ────────────────────────────────────
 col1, col2, _ = st.columns([1, 1, 4])
+
 with col1:
     if st.button("뒤로 ⬅️"):
         st.experimental_rerun()
@@ -46,5 +64,4 @@ with col2:
         else:
             st.session_state["hand_status"] = hand_status
             st.session_state["selected_tools"] = selected_tools or ["없음"]
-            switch_page("1_재료선택")   # 실제 파일명으로 이동
-#asd
+            switch_page("1_재료선택")   # 다음 페이지로 이동
