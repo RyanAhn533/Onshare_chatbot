@@ -21,13 +21,11 @@ def speak(text: str):
     )
 
 # ── 공통 이미지-버튼 위젯 (라디오/토글) ─────────────────────
-def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 5):
-    """이미지 위에 버튼이 겹쳐서 클릭 가능하게 구성된 이미지 멀티 셀렉트"""
+def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     st.write(f"#### {label}")
     states = {}
 
     keys = list(options.keys())
-
     for i in range(0, len(keys), per_row):
         row_keys = keys[i:i + per_row]
         cols = st.columns(per_row)
@@ -36,37 +34,38 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 5)
             col = cols[j]
             if j < len(row_keys):
                 name = row_keys[j]
-                img = options[name]
+                img_path = options[name]
                 key = f"sel_{name}"
 
+                # 상태 초기화
                 if key not in st.session_state:
                     st.session_state[key] = False
 
                 selected = st.session_state[key]
-                border = "5px solid #ff8c00" if selected else "1px solid #ccc"
+                border = "4px solid #ff8c00" if selected else "2px solid #ccc"
 
-                # 고유 버튼 키 (버튼 충돌 방지)
-                button_key = f"btn_overlay_{name}"
-
-                # 이미지 + 겹쳐진 버튼 UI
+                # HTML 구조: 이미지 + 전면 버튼 오버레이
                 html = f"""
-                <div style="position: relative; width: 100%; text-align:center;">
-                    <img src="data:image/png;base64,{_b64_png(img)}"
-                         style="width:100%;padding:4px;border:{border};border-radius:12px;">
-                    <form action="" method="post">
-                        <input type="submit" name="{button_key}" value=""
-                            style="position:absolute;top:0;left:0;width:100%;height:100%;
-                                   opacity:0;cursor:pointer;border:none;">
+                <div style="position: relative; width: 100%; text-align: center; margin-bottom: 12px;">
+                    <img src="data:image/png;base64,{_b64_png(img_path)}"
+                         style="width:100%; border-radius: 16px; border: {border};">
+                    <form method="post">
+                        <input type="submit" name="{key}" value=""
+                            style="
+                                position:absolute;
+                                top:0; left:0; width:100%; height:100%;
+                                opacity:0; cursor:pointer;
+                                border: none; background-color: transparent;
+                            ">
                     </form>
-                    <div style='margin-top: 4px; font-weight: bold; font-size: 1.1rem'>{name}</div>
+                    <div style="margin-top: 6px; font-weight: bold; font-size: 1.1rem;">{name}</div>
                 </div>
                 """
 
-                # HTML 클릭 처리
-                submitted = col.form(key=f"form_{name}").form_submit_button(label="", help=name)
-                if submitted:
-                    st.session_state[key] = not selected
-                    speak(f"{name} {'선택' if st.session_state[key] else '해제'}")
+                with col.form(key=f"form_{key}"):
+                    submitted = st.form_submit_button(label="")
+                    if submitted:
+                        st.session_state[key] = not st.session_state[key]
 
                 col.markdown(html, unsafe_allow_html=True)
                 states[name] = st.session_state[key]
@@ -74,7 +73,6 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 5)
                 col.markdown("&nbsp;")
 
     return [k for k, v in states.items() if v]
-
 
 
 
