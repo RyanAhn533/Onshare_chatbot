@@ -21,7 +21,7 @@ def speak(text: str):
     )
 
 # ── 공통 이미지-버튼 위젯 (라디오/토글) ─────────────────────
-def multiselect_by_image_overlay(label: str, options: dict[str, Path], per_row: int = 5):
+def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 5):
     """이미지 위에 버튼이 겹쳐서 클릭 가능하게 구성된 이미지 멀티 셀렉트"""
     st.write(f"#### {label}")
     states = {}
