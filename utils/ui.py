@@ -2,6 +2,7 @@
 import streamlit as st
 from pathlib import Path
 import base64
+from pathlib import Path
 
 # ── 내부 util ───────────────────────────────────────────────
 def _b64_png(path: Path) -> str:
@@ -23,7 +24,7 @@ def speak(text: str):
 # ── 공통 이미지-버튼 위젯 (라디오/토글) ─────────────────────
 def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     st.write(f"#### {label}")
-    states = {}
+    selected = {}
 
     keys = list(options.keys())
     for i in range(0, len(keys), per_row):
@@ -37,42 +38,37 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
                 img_path = options[name]
                 key = f"sel_{name}"
 
-                # 상태 초기화
+                # 선택 상태 초기화
                 if key not in st.session_state:
                     st.session_state[key] = False
 
-                selected = st.session_state[key]
-                border = "4px solid #ff8c00" if selected else "2px solid #ccc"
+                is_selected = st.session_state[key]
+                border = "4px solid #ff8c00" if is_selected else "2px solid #ccc"
 
-                # HTML 구조: 이미지 + 전면 버튼 오버레이
                 html = f"""
-                <div style="position: relative; width: 100%; text-align: center; margin-bottom: 12px;">
+                <div style="position:relative; text-align:center; margin-bottom:8px;">
                     <img src="data:image/png;base64,{_b64_png(img_path)}"
-                         style="width:100%; border-radius: 16px; border: {border};">
+                         style="width:100%; border-radius:12px; border:{border};">
                     <form method="post">
                         <input type="submit" name="{key}" value=""
-                            style="
-                                position:absolute;
-                                top:0; left:0; width:100%; height:100%;
-                                opacity:0; cursor:pointer;
-                                border: none; background-color: transparent;
-                            ">
+                            style="position:absolute;top:0;left:0;width:100%;height:100%;
+                                   opacity:0;cursor:pointer;border:none;">
                     </form>
-                    <div style="margin-top: 6px; font-weight: bold; font-size: 1.1rem;">{name}</div>
+                    <div style="margin-top:6px; font-weight:bold; font-size:1.05rem;">{name}</div>
                 </div>
                 """
 
                 with col.form(key=f"form_{key}"):
-                    submitted = st.form_submit_button(label="")
+                    submitted = st.form_submit_button("")
                     if submitted:
-                        st.session_state[key] = not st.session_state[key]
+                        st.session_state[key] = not is_selected
 
                 col.markdown(html, unsafe_allow_html=True)
-                states[name] = st.session_state[key]
+                selected[name] = st.session_state[key]
             else:
                 col.markdown("&nbsp;")
 
-    return [k for k, v in states.items() if v]
+    return [k for k, v in selected.items() if v]
 
 
 
