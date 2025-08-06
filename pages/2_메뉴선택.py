@@ -75,8 +75,13 @@ menu_imgs = {
 }
 
 # ── 사용자 메뉴 선택 ────────────────────────────────
-menu = select_one_by_image("메뉴를 선택하세요", menu_imgs)
+# ── 메뉴 선택 UI ─────────────────────────────────────
+select_one_by_image("메뉴를 선택하세요", menu_imgs)
 
+# ▼▼▼ ➊ 선택한 메뉴명 표시 (두 줄) ▼▼▼
+selected_menu = st.session_state.get("menu")
+if selected_menu:
+    st.markdown(f"### ✅ 현재 선택한 메뉴: **{selected_menu}**")
 # ── 네비게이션 버튼 ─────────────────────────────────
 col1, col2 = st.columns(2)
 
@@ -86,7 +91,18 @@ with col1:
 
 
 with col2:
-    if menu and st.button("요리 시작하기 ▶️"):
-        st.session_state["menu"]         = menu
+    if st.button("요리 시작하기 ▶️"):
+        # ① 사용자가 클릭한 메뉴가 있으면 그걸 우선, 없으면 GPT 기본 메뉴
+        selected_menu = st.session_state.get("menu_selected", st.session_state.get("menu"))
+
+        # ② 안전장치: None 이면 에러 표시
+        if not selected_menu:
+            st.warning("메뉴를 먼저 선택해 주세요!")
+            st.stop()
+
+        # ③ 세션에 최종 메뉴 확정
+        st.session_state["menu"] = selected_menu
         st.session_state["gpt_response"] = gpt_response
-        st.switch_page("pages/3_만드는방법.py")
+
+        # ④ 페이지 이동 (Streamlit Pages 사용 시 파일명이 아니라 메뉴명으로)
+        st.switch_page("3_만드는방법")      # 또는 switch_page("pages/3_만드는방법.py") 유틸 함수 규칙에 맞게
