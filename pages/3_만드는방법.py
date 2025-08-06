@@ -39,18 +39,31 @@ if "recipe_steps" not in st.session_state:
     )
 
 # ── 메뉴 이미지 표시 (크기 축소 적용) ───────────────────────
+# ── 메뉴 이미지 표시 (가운데 + 크기 축소 적용) ───────────────────────
 menu_img_path = Path("data/menu") / f"{menu}.png"
 if menu_img_path.exists():
-    st.image(
-        Image.open(menu_img_path),
-        caption=f"오늘 만들 메뉴: {menu}",
-        use_container_width=False,  # 컨테이너 폭에 맞추지 않음
-        width=200                   # 픽셀 단위 크기 지정
+    import base64
+    from io import BytesIO
+
+    # 이미지 로드 후 Base64 인코딩
+    img = Image.open(menu_img_path)
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_b64 = base64.b64encode(buffered.getvalue()).decode()
+
+    # HTML로 가운데 정렬 + 크기 지정
+    st.markdown(
+        f"""
+        <div style="text-align:center;">
+            <img src="data:image/png;base64,{img_b64}" width="200">
+            <p><b>오늘 만들 메뉴:</b> {menu}</p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 else:
     st.warning(f"'{menu}' 메뉴 이미지를 찾을 수 없습니다.")
 
-st.markdown("---")
 
 # ── TTS 텍스트 정제 함수 ───────────────────
 def _sanitize_for_tts(text: str) -> str:
