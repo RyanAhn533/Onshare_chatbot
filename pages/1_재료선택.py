@@ -96,8 +96,13 @@ with st.sidebar:
         )
         for item in st.session_state.selected_ingredients:
             st.markdown(
-                f"<div style='padding:6px 12px; margin:4px 0; background-color:#ffe0b2; "
-                f"border-radius:15px; font-weight:bold; color:#4e342e;'>{item}</div>",
+                f"""
+                <div style='background-color:#ffe0b2; padding:6px 12px;
+                            border-radius:15px; font-weight:bold; color:#4e342e;
+                            width:80%; margin:6px auto; text-align:center;'>
+                    {item}
+                </div>
+                """,
                 unsafe_allow_html=True
             )
         st.markdown("</div>", unsafe_allow_html=True)
