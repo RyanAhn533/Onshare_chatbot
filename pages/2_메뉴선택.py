@@ -1,7 +1,5 @@
-# pages/2_메뉴추천.py
 import streamlit as st
 from pathlib import Path
-from utils.ui import select_one_by_image, speak
 from utils.gpt_helper import ask_gpt
 
 # ── 페이지 설정 ─────────────────────────────────────
@@ -13,9 +11,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.subheader("③ 만들 수 있는 요리를 골라 주세요")
-speak("오늘 만들 메뉴를 하나 골라 주세요.")
+st.components.v1.html(
+    """<script>window.speechSynthesis.speak(new SpeechSynthesisUtterance("오늘 만들 메뉴를 하나 골라 주세요."));</script>""",
+    height=0,
+)
 
-# ── 이전 단계에서 선택한 정보 불러오기 ──────────────
+# ── 이전 단계 정보 불러오기 ──────────────
 ingredients = st.session_state.get("selected_ingredients", [])
 tools       = st.session_state.get("selected_tools", [])
 hand        = st.session_state.get("hand_status", "깨끗해요")
@@ -60,7 +61,7 @@ st.markdown(gpt_response)
 # ── GPT 응답에서 첫 번째 메뉴명만 추출 → 기본 menu 저장 ─
 first_line = gpt_response.split("\n")[0].strip()
 menu_name_only = first_line.split(":")[0].strip() if ":" in first_line else first_line
-st.session_state["menu"] = menu_name_only  # 순수 메뉴명 저장
+st.session_state["menu"] = menu_name_only  # 기본 추천 메뉴
 
 # ── 메뉴 이미지 목록 ─────────────────────────────────
 base_path = Path("data/menu")
@@ -79,10 +80,27 @@ menu_imgs = {
     "들기름막국수": base_path / "들기름막국수.png",
 }
 
-# ── 메뉴 선택 UI (선택 시 menu 값 덮어쓰기) ────────────
-menu_selected = select_one_by_image("메뉴를 선택하세요", menu_imgs)
-if menu_selected:
-    st.session_state["menu"] = menu_selected  # 클릭 시 덮어씀
+# ── 이미지 클릭 선택 함수 (테두리 토글) ───────────────
+def select_one_by_image(label, options, per_row=4):
+    st.write(f"#### {label}")
+
+    if "menu_selected" not in st.session_state:
+        st.session_state["menu_selected"] = None
+
+    keys = list(options.keys())
+    cols = st.columns(per_row)
+    for idx, key in enumerate(keys):
+        img_path = options[key]
+        border_style = "5px solid red" if st.session_state["menu_selected"] == key else "2px solid transparent"
+        with cols[idx % per_row]:
+            if st.button(f"{key}", key=f"btn_{key}"):
+                st.session_state["menu_selected"] = key
+                st.session_state["menu"] = key
+            st.image(str(img_path), caption=key, use_container_width=True)
+            st.markdown(f"<div style='border:{border_style}; padding:2px;'></div>", unsafe_allow_html=True)
+
+# ── 메뉴 선택 UI ─────────────────────────────────────
+select_one_by_image("메뉴를 선택하세요", menu_imgs)
 
 # ── 네비게이션 버튼 ──────────────────────────────────
 col1, col2 = st.columns(2)
@@ -94,4 +112,4 @@ with col1:
 with col2:
     if st.button("요리 시작하기 ▶️"):
         st.session_state["gpt_response"] = gpt_response
-        st.switch_page("pages/3_만드는방법.py")
+        st.switch_page("pages/4_요리도우미.py")

@@ -8,14 +8,10 @@ from recipe_templates import BASE_RECIPES
 st.set_page_config(page_title="④ 요리 도우미", page_icon="👩‍🍳")
 
 # ── 세션 정보 가져오기 ─────────────────────
-menu        = st.session_state.get("menu")
+menu        = st.session_state.get("menu")  # 이미지 이름 그대로 넘어옴
 ingredients = st.session_state.get("selected_ingredients", [])
 tools       = st.session_state.get("selected_tools", [])
 hand        = st.session_state.get("hand_status", "깨끗해요")
-
-# 메뉴명 정제 (콜론 앞부분만, 좌우 공백 제거)
-if menu:
-    menu = menu.split(":")[0].strip()
 
 # 메뉴 없을 때 예외 처리
 if not menu:
