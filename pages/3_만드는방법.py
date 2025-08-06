@@ -9,7 +9,7 @@ from recipe_templates import BASE_RECIPES
 st.set_page_config(page_title="④ 요리 도우미", page_icon="👩‍🍳")
 
 # ── 세션 정보 가져오기 ─────────────────────
-menu = st.session_state.get("menu")              # 선택된 메뉴명
+menu = st.session_state.get("menu") or st.session_state.get("menu_selected")
 if not menu:
     st.error("이전 단계 정보가 없습니다. 처음부터 다시 진행해 주세요.")
     st.stop()
@@ -18,6 +18,13 @@ if menu not in BASE_RECIPES:
     st.error(f"'{menu}' 메뉴의 레시피를 찾을 수 없습니다. 다른 메뉴를 선택해 주세요.")
     st.stop()
 
+# ── 요리용 챗봇 온쿡 추천 결과 표시 (있을 경우) ─────────────
+oncook_response = st.session_state.get("oncook_response")
+if oncook_response:
+    st.markdown("#### 🍳 요리용 챗봇 온쿡 추천 이유")
+    st.markdown(oncook_response)
+    st.markdown("---")
+
 # ── 레시피 단계 로드 & 세션 저장 ───────────────────
 steps = BASE_RECIPES[menu].get("순서") or []
 if not steps:
@@ -25,7 +32,6 @@ if not steps:
     st.stop()
 
 if "recipe_steps" not in st.session_state:
-    # 처음 진입 시 한 번만 저장
     st.session_state.update(
         recipe_steps=steps,
         step_idx=0,
@@ -64,7 +70,6 @@ def show_current_step():
     </div>
     """, unsafe_allow_html=True)
 
-    # 자동 TTS (같은 단계에서 중복 재생 방지)
     if st.session_state.get("_spoken_idx") != idx:
         speak(_sanitize_for_tts(steps[idx]))
         st.session_state["_spoken_idx"] = idx
