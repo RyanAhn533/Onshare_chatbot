@@ -85,14 +85,25 @@ if selected_ing:
 # ── 오른쪽 사이드바에 선택된 재료 표시 ─────────────────────────────
 with st.sidebar:
     st.markdown("### 🛒 현재까지 선택된 재료")
+
     if st.session_state.selected_ingredients:
+        st.markdown(
+            """
+            <div style='background-color:#fff8e1; padding:12px; border-radius:10px;
+                        border:2px solid #ff9800; box-shadow: 2px 2px 6px rgba(0,0,0,0.2);'>
+            """,
+            unsafe_allow_html=True
+        )
         for item in st.session_state.selected_ingredients:
             st.markdown(
-                f"<div style='padding:6px 12px; margin:4px 0; background-color:#f0f0f0; border-radius:15px;'>{item}</div>",
+                f"<div style='padding:6px 12px; margin:4px 0; background-color:#ffe0b2; "
+                f"border-radius:15px; font-weight:bold; color:#4e342e;'>{item}</div>",
                 unsafe_allow_html=True
             )
+        st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("아직 선택된 재료가 없습니다.")
+
 
 # ── 네비게이션 버튼 ────────────────────────────────────
 col1, col2, col3 = st.columns(3)
