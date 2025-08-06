@@ -3,7 +3,6 @@ from pathlib import Path
 from streamlit_image_select import image_select
 import base64
 from typing import Dict, Union
-from utils.ui import speak
 
 
 # ── TTS: 브라우저 Web Speech API 사용 ────────────────────────
