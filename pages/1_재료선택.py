@@ -55,6 +55,10 @@ ing_imgs = {
     "포도": base_path / "포도.png",
     "표고버섯": base_path / "표고버섯.png",
     "피클": base_path / "피클.png",
+    "피자치즈": base_path / "피자치즈.png",
+    "황제버섯": base_path / "황제버섯.png",
+    "샤브샤브용소고기": base_path / "샤브샤브용소고기.png",
+    "생모짜렐라": base_path / "생모짜렐라.png",
     "후추": base_path / "후추.png",
 }
 

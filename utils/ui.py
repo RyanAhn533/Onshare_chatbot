@@ -81,6 +81,23 @@ def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
         return name
     return None
 
+def select_one_by_image_noempty(label: str, options: dict[str, Path]):
+    st.write(f"#### {label}")
+
+    paths = list(options.values())
+    captions = list(options.keys())
+
+    selected_path = image_select(
+        label="",
+        images=[str(p) for p in paths],
+        captions=captions,
+    )
+
+    if selected_path:
+        name = captions[paths.index(Path(selected_path))]
+        speak(f"{name} 선택")
+        return name
+    return None
 
 
 # ── 제어 패널: 단일 선택처럼 사용 후 콜백 호출 ───────────────────────

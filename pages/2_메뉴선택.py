@@ -65,6 +65,9 @@ menu_imgs = {
     "카레": base_path / "카레.png",
     "피자": base_path / "피자.png",
     "햄버거": base_path / "햄버거.png",
+    "토마토카프레제": base_path / "토마토카프레제.png",
+    "토마토스파게티": base_path / "토마토스파게티.png",
+    "들기름막국수": base_path / "들기름막국수.png",
 }
 
 menu = select_one_by_image(

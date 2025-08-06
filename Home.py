@@ -1,5 +1,5 @@
 import streamlit as st
-from utils.ui import multiselect_by_image, select_one_by_image, speak
+from utils.ui import multiselect_by_image, select_one_by_image, speak, select_one_by_image_noempty
 from pathlib import Path
 
 def switch_page(page: str):
@@ -19,7 +19,7 @@ hand_imgs = {
     "손 깨끗해요": Path("data/hand/clean.png"),
     "손 더러워요": Path("data/hand/dirty.png"),
 }
-hand_status = select_one_by_image("손을 씻었나요?", hand_imgs)
+hand_status = select_one_by_image_noempty("손을 씻었나요?", hand_imgs)
 
 # 2) 준비된 도구
 base_path = Path("data/tools")
