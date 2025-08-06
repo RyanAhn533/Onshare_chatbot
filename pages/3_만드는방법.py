@@ -76,7 +76,7 @@ def on_again(): show_current_step()
 def on_stop(): st.session_state["step_idx"] = 1_000_000; show_current_step()
 
 # ── 메뉴 이미지 표시 ───────────────────────
-menu_img_path = Path("C:\chat_bot_aac_final\data\menu") / f"{menu}.png"
+menu_img_path = Path("data/menu") / f"{menu}.png"
 if menu_img_path.exists():
     st.image(Image.open(menu_img_path), caption=f"추천 메뉴: {menu}", use_container_width=True)
 

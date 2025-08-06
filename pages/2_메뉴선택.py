@@ -54,7 +54,7 @@ st.markdown("#### 🍳 요리용 챗봇 온쿡 추천 결과")
 st.markdown(gpt_response)
 
 # 메뉴 이미지 상대경로 지정
-base_path = Path("C:\chat_bot_aac_final\data\menu")
+base_path = Path("data/menu")
 menu_imgs = {
     "간장계란밥": base_path / "간장계란밥.png",
     "계란후라이": base_path / "계란후라이.png",

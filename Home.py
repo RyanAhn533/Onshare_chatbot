@@ -19,7 +19,7 @@ if "selected_ingredients" not in st.session_state:
     st.session_state.selected_ingredients = []
 
 # 재료 이미지
-base_path = Path("C:\chat_bot_aac_final\data\ingredients")
+base_path = Path("data/ingredients")
 ingredient_imgs = {
     "당근": base_path / "당근.png",
     "감자": base_path / "감자.png",

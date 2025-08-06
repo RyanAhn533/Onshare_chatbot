@@ -14,7 +14,7 @@ st.subheader("② 집에 있는 재료를 선택해주세요")
 speak("집에 있는 재료 중 하나를 선택해 주세요.")
 
 # 재료 이미지
-base_path = Path("C:\chat_bot_aac_final\data\tools")
+base_path = Path("data/ingredients")
 ing_imgs = {
     "가지": base_path / "가지.png",
     "간장": base_path / "간장.png",
