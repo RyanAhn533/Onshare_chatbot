@@ -82,22 +82,17 @@ if selected_ing:
     else:
         st.session_state.selected_ingredients.append(selected_ing)  # 없으면 추가
 
-# ── 선택된 재료 태그 표시 ───────────────────────────────
-if st.session_state.selected_ingredients:
-    tags_html = " ".join(
-        [
-            (
-                "<span style='background-color:#f0f0f0; color:#333; "
-                "padding:6px 12px; border-radius:15px; margin:4px; "
-                "display:inline-block;'>"
-                f"{item}</span>"
+# ── 오른쪽 사이드바에 선택된 재료 표시 ─────────────────────────────
+with st.sidebar:
+    st.markdown("### 🛒 현재까지 선택된 재료")
+    if st.session_state.selected_ingredients:
+        for item in st.session_state.selected_ingredients:
+            st.markdown(
+                f"<div style='padding:6px 12px; margin:4px 0; background-color:#f0f0f0; border-radius:15px;'>{item}</div>",
+                unsafe_allow_html=True
             )
-            for item in st.session_state.selected_ingredients
-        ]
-    )
-    st.markdown(f"**현재까지 선택된 재료:**<br>{tags_html}", unsafe_allow_html=True)
-else:
-    st.info("아직 선택된 재료가 없습니다.")
+    else:
+        st.info("아직 선택된 재료가 없습니다.")
 
 # ── 네비게이션 버튼 ────────────────────────────────────
 col1, col2, col3 = st.columns(3)
