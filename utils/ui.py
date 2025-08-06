@@ -2,6 +2,8 @@ import streamlit as st
 from pathlib import Path
 from streamlit_image_select import image_select
 import base64
+from typing import Dict, Union
+from utils.ui import speak
 
 
 # ── TTS: 브라우저 Web Speech API 사용 ────────────────────────
@@ -55,22 +57,45 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
 
 # ── 단일 선택: image_select 기본 사용 ──────────────────────────────
 
-def select_one_by_image(label: str, options: dict[str, Path]):
+def select_one_by_image(
+    label: str,
+    options: Dict[str, Union[str, Path]],
+    img_size: tuple = (200, 200),
+    container_width: bool = False
+):
+    """
+    하나의 이미지를 선택하는 UI.
+    
+    Args:
+        label (str): 상단 안내 라벨
+        options (dict): {이름: Path or str} 형태의 이미지 목록
+        img_size (tuple): (width, height) 픽셀 크기
+        container_width (bool): True면 화면 폭에 맞춤
+    """
     st.write(f"#### {label}")
 
-    paths = list(options.values())
+    # Path를 문자열로 변환
+    paths = [str(p) for p in options.values()]
     captions = list(options.keys())
 
     selected_path = image_select(
         label="",
-        images=[str(p) for p in paths],
+        images=paths,
         captions=captions,
+        use_container_width=container_width,
+        image_size=img_size
     )
 
     if selected_path:
-        name = captions[paths.index(Path(selected_path))]
+        # 선택된 파일명 → options key 찾기
+        try:
+            name = captions[paths.index(selected_path)]
+        except ValueError:
+            name = Path(selected_path).stem
+
         speak(f"{name} 선택")
         return name
+
     return None
 
 

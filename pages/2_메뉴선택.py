@@ -1,5 +1,4 @@
 import streamlit as st
-from pathlib import Path
 from utils.ui import select_one_by_image, speak
 from utils.gpt_helper import ask_gpt
 
@@ -58,10 +57,28 @@ with st.spinner("GPT가 가능한 요리를 생각 중이에요..."):
 st.markdown("#### 🍳 요리용 챗봇 온쿡 추천 결과")
 st.markdown(gpt_response)
 
+# ── 메뉴 이미지 path 하나씩 지정 ──────────────────────
+base_path = r"C:\chat_bot_aac_final\data\menu"
+
+menu_imgs = {
+    "간장계란밥": f"{base_path}\\간장계란밥.png",
+    "계란후라이": f"{base_path}\\계란후라이.png",
+    "라면": f"{base_path}\\라면.png",
+    "밀푀유나베": f"{base_path}\\밀푀유나베.png",
+    "삼계탕": f"{base_path}\\삼계탕.png",
+    "샌드위치": f"{base_path}\\샌드위치.png",
+    "카레": f"{base_path}\\카레.png",
+    "피자": f"{base_path}\\피자.png",
+    "햄버거": f"{base_path}\\햄버거.png",
+}
+
 # ── 메뉴 이미지 선택 UI ──────────────────────
 st.markdown("#### 🍽️ 이미지로 메뉴를 선택하세요")
-menu_imgs = {p.stem: p for p in Path("data/menu").glob("*.png")}
-menu = select_one_by_image("메뉴를 선택하세요", menu_imgs)
+menu = select_one_by_image(
+    "메뉴를 선택하세요",
+    options=menu_imgs,
+    img_size=(200, 200)  # 이미지 크기 확대
+)
 
 # ── 다음 페이지 이동 ─────────────────────────
 if menu and st.button("요리 시작하기 ▶️"):
