@@ -1,3 +1,4 @@
+# pages/2_메뉴추천.py
 import streamlit as st
 from pathlib import Path
 from utils.gpt_helper import ask_gpt
@@ -93,10 +94,14 @@ def select_one_by_image(label, options, per_row=4):
         img_path = options[key]
         border_style = "5px solid red" if st.session_state["menu_selected"] == key else "2px solid transparent"
         with cols[idx % per_row]:
-            if st.button(f"{key}", key=f"btn_{key}"):
+            if st.button(
+                f"**{key}**",
+                key=f"btn_{key}",
+                help=f"{key} 선택하기",
+            ):
                 st.session_state["menu_selected"] = key
                 st.session_state["menu"] = key
-            st.image(str(img_path), caption=key, use_container_width=True)
+            st.image(str(img_path), caption=key, use_container_width=True, output_format="PNG")
             st.markdown(f"<div style='border:{border_style}; padding:2px;'></div>", unsafe_allow_html=True)
 
 # ── 메뉴 선택 UI ─────────────────────────────────────
@@ -112,4 +117,4 @@ with col1:
 with col2:
     if st.button("요리 시작하기 ▶️"):
         st.session_state["gpt_response"] = gpt_response
-        st.switch_page("pages/4_요리도우미.py")
+        st.switch_page("pages/3_만드는방법.py")
