@@ -87,6 +87,7 @@ with st.sidebar:
     st.markdown("### 🛒 현재까지 선택된 재료")
 
     if st.session_state.selected_ingredients:
+        # 카드 박스
         st.markdown(
             """
             <div style='background-color:#fff8e1; padding:12px; border-radius:10px;
@@ -94,17 +95,21 @@ with st.sidebar:
             """,
             unsafe_allow_html=True
         )
+
+        # 재료 칩
         for item in st.session_state.selected_ingredients:
             st.markdown(
                 f"""
-                <div style='background-color:#ffe0b2; padding:6px 12px;
+                <div style='background-color:#ffe0b2; height:32px; 
                             border-radius:15px; font-weight:bold; color:#4e342e;
-                            width:80%; margin:6px auto; text-align:center;'>
+                            width:80%; margin:6px auto;
+                            display:flex; justify-content:center; align-items:center;'>
                     {item}
                 </div>
                 """,
                 unsafe_allow_html=True
             )
+
         st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("아직 선택된 재료가 없습니다.")
