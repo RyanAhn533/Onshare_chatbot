@@ -37,16 +37,27 @@ tool_imgs = {
     "칼": base_path / "칼.png",
     "후라이팬": base_path / "후라이팬.png",
 }
-selected_tools = select_one_by_image("사용할 도구를 골라 주세요", tool_imgs)
+# ── 세션 상태 초기화 ───────────────────────────────
+if "selected_tools" not in st.session_state:
+    st.session_state.selected_tools = []
 
-# ── 사이드바에 현재까지 선택된 도구 표시 ───────────────────────
+# ── 준비된 도구 선택 ───────────────────────────────
+selected_tool = select_one_by_image("사용할 도구를 골라 주세요", tool_imgs)
+
+if selected_tool:
+    if selected_tool in st.session_state.selected_tools:
+        st.session_state.selected_tools.remove(selected_tool)
+    else:
+        st.session_state.selected_tools.append(selected_tool)
+
+
 with st.sidebar:
     st.markdown(
         "<h2 style='font-size:1.6em; font-weight:bold;'>🛠 현재까지 선택된 도구</h2>",
         unsafe_allow_html=True
     )
 
-    if selected_tools:
+    if st.session_state.selected_tools:
         st.markdown(
             """
             <div style='background-color:#e3f2fd; padding:12px; border-radius:10px;
@@ -54,35 +65,19 @@ with st.sidebar:
             """,
             unsafe_allow_html=True
         )
-        st.markdown(
-            f"""
-            <div style='background-color:#bbdefb; height:32px; 
-                        border-radius:15px; font-weight:bold; color:#0d47a1;
-                        width:80%; margin:6px auto;
-                        display:flex; justify-content:center; align-items:center;'>
-                {selected_tools}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        for tool in st.session_state.selected_tools:
+            st.markdown(
+                f"""
+                <div style='background-color:#bbdefb; height:32px; 
+                            border-radius:15px; font-weight:bold; color:#0d47a1;
+                            width:80%; margin:6px auto;
+                            display:flex; justify-content:center; align-items:center;'>
+                    {tool}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("아직 선택된 도구가 없습니다.")
 
-# 3) 이동 버튼
-col1, col2, _ = st.columns([1, 1, 4])
-with col1:
-    if st.button("뒤로 ⬅️"):
-        st.experimental_rerun()
-with col2:
-    if st.button("다음 단계 ➡️"):
-        if hand_status is None:
-            speak("손 씻기를 먼저 선택해 주세요.")
-            st.warning("손 씻기 여부를 선택해 주세요.")
-        elif hand_status == "손 더러워요":
-            speak("먼저 손을 깨끗이 씻고 다시 눌러 주세요!")
-            st.warning("⚠️ 손을 씻고 돌아오면 ‘다음 단계’ 버튼을 다시 눌러 주세요.")
-        else:
-            st.session_state["hand_status"] = hand_status
-            st.session_state["selected_tools"] = selected_tools or ["없음"]
-            switch_page("1_재료선택.py")
