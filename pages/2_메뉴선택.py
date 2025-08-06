@@ -102,4 +102,4 @@ with col2:
         st.session_state["oncook_response"] = oncook_response
 
         # 페이지 이동
-        st.switch_page("3_만드는방법.py")
+        st.switch_page("pages/3_만드는방법.py")
