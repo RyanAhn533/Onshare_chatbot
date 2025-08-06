@@ -89,4 +89,4 @@ with col2:
     if menu and st.button("요리 시작하기 ▶️"):
         st.session_state["menu"]         = menu
         st.session_state["gpt_response"] = gpt_response
-        switch_page("pages/3_만드는방법.py")
+        st.switch_page("pages/3_만드는방법.py")
