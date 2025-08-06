@@ -1,7 +1,12 @@
 import streamlit as st
 from pathlib import Path
 from streamlit_image_select import image_select
+import streamlit as st
 
+def switch_page(page_name: str):
+    from streamlit_extras.switch_page_button import switch_page as sp
+    sp(page_name)
+    
 # ── TTS: 브라우저 Web Speech API 사용 ────────────────────────
 def speak(text: str):
     """TTS wrapper (uses the browser's Web Speech API)."""

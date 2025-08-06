@@ -3,6 +3,7 @@ import streamlit as st
 from pathlib import Path
 from utils.ui import select_one_by_image, speak
 from utils.gpt_helper import ask_gpt
+from utils.ui import switch_page
 
 # ── 페이지 설정 ─────────────────────────────────────
 st.set_page_config(page_title="③ 메뉴 추천", page_icon="🍽️")
@@ -83,8 +84,9 @@ with col1:
     if st.button("⬅️ 이전 단계"):
         st.switch_page("pages/1_재료선택.py")
 
+
 with col2:
     if menu and st.button("요리 시작하기 ▶️"):
-        st.session_state["menu"]         = menu  # 사용자가 선택한 메뉴명 그대로 저장
+        st.session_state["menu"]         = menu
         st.session_state["gpt_response"] = gpt_response
-        st.switch_page("pages/3_만드는방법.py")
+        switch_page("pages/3_만드는방법.py")
