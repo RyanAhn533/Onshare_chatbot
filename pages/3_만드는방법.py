@@ -8,21 +8,18 @@ from recipe_templates import BASE_RECIPES
 st.set_page_config(page_title="④ 요리 도우미", page_icon="👩‍🍳")
 
 # ── 세션 정보 가져오기 ─────────────────────
-menu        = st.session_state.get("menu")  # ← 앞단에서 클릭한 메뉴명 그대로 들어옴
+menu        = st.session_state.get("menu")
 ingredients = st.session_state.get("selected_ingredients", [])
 tools       = st.session_state.get("selected_tools", [])
 hand        = st.session_state.get("hand_status", "깨끗해요")
 
-# 메뉴명 정제 (콜론 앞부분만, 좌우 공백 제거)
 if menu:
     menu = menu.split(":")[0].strip()
 
-# 메뉴 없을 때 예외 처리
 if not menu:
     st.error("이전 단계 정보가 없습니다. 처음부터 다시 진행해 주세요.")
     st.stop()
 
-# BASE_RECIPES에 없는 메뉴면 안내 후 중단
 if menu not in BASE_RECIPES:
     st.error(f"'{menu}' 메뉴의 레시피를 찾을 수 없습니다. 다른 메뉴를 선택해 주세요.")
     st.stop()
@@ -34,7 +31,7 @@ def _sanitize_for_tts(text: str) -> str:
         text = text.replace(ch, f"{i}단계 ")
     return text
 
-# ── 레시피 세션에 저장 및 메뉴 이미지 출력 ─
+# ── 레시피 불러오기 ───────────────────────
 def fetch_recipe():
     steps = BASE_RECIPES[menu]['순서']
     st.session_state.update({
@@ -42,43 +39,60 @@ def fetch_recipe():
         "step_idx": 0,
         "_spoken_idx": None,
     })
-    menu_img_path = Path("data/menu") / f"{menu}.png"  # ← 메뉴명으로 이미지 파일 찾기
-    if menu_img_path.exists():
-        st.image(Image.open(menu_img_path), caption=f"추천 메뉴: {menu}", use_container_width=True)
-    else:
-        st.warning(f"'{menu}' 메뉴의 이미지를 찾을 수 없습니다.")
+    show_current_step()
 
 # ── 현재 단계 표시 ─────────────────────────
 def show_current_step():
     idx = st.session_state.get("step_idx", 0)
     steps = st.session_state.get("recipe_steps", [])
+
     if not steps:
         st.info("‘시작’ 버튼을 누르면 요리를 시작할 수 있어요.")
         return
+
+    if idx < 0:
+        st.session_state["step_idx"] = 0
+        idx = 0
     if idx >= len(steps):
         st.success("모든 단계가 끝났어요! 맛있게 드세요 😊")
         speak("모든 단계가 끝났어요! 맛있게 드세요.")
         return
+
     st.markdown(f"""
     <div style='background:#fff3cd;padding:12px;border-radius:8px;'>
         <b>{idx + 1}/{len(steps)}단계</b><br>{steps[idx]}
     </div>
     """, unsafe_allow_html=True)
+
     if st.session_state.get("_spoken_idx") != idx:
         speak(_sanitize_for_tts(steps[idx]))
         st.session_state["_spoken_idx"] = idx
 
 # ── 버튼 콜백 ───────────────────────────────
-def on_start(): fetch_recipe(); show_current_step()
-def on_next():  st.session_state["step_idx"] += 1; show_current_step()
-def on_prev():  st.session_state["step_idx"] -= 1; show_current_step()
-def on_again(): show_current_step()
-def on_stop():  st.session_state["step_idx"] = 1_000_000; show_current_step()
+def on_start():
+    fetch_recipe()
 
-# ── 메뉴 이미지 표시 ───────────────────────
-menu_img_path = Path("data/menu") / f"{menu}.png"  # ← 메뉴명 기반 경로
+def on_next():
+    st.session_state["step_idx"] += 1
+    show_current_step()
+
+def on_prev():
+    st.session_state["step_idx"] -= 1
+    show_current_step()
+
+def on_again():
+    show_current_step()
+
+def on_stop():
+    st.session_state["step_idx"] = 1_000_000
+    show_current_step()
+
+# ── 메뉴 이미지 표시 (시작 전) ──────────────
+menu_img_path = Path("data/menu") / f"{menu}.png"
 if menu_img_path.exists():
     st.image(Image.open(menu_img_path), caption=f"추천 메뉴: {menu}", use_container_width=True)
+else:
+    st.warning(f"'{menu}' 메뉴의 이미지를 찾을 수 없습니다.")
 
 # ── 버튼 한 줄 배치 ───────────────────────
 col1, col2, col3, col4, col5 = st.columns(5)
