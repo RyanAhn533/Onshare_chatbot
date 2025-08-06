@@ -72,10 +72,13 @@ selected_ing = select_one_by_image(
     options=ing_imgs
 )
 
-# 선택한 재료 누적 저장
-# 선택한 재료 누적 저장
-if selected_ing and selected_ing not in st.session_state.selected_ingredients:
-    st.session_state.selected_ingredients.append(selected_ing)
+# 선택한 재료 토글 저장
+if selected_ing:
+    if selected_ing in st.session_state.selected_ingredients:
+        st.session_state.selected_ingredients.remove(selected_ing)  # 이미 있으면 제거
+    else:
+        st.session_state.selected_ingredients.append(selected_ing)  # 없으면 추가
+
 
 # 현재까지 선택된 재료 표시 (태그 스타일)
 if st.session_state.selected_ingredients:

@@ -64,7 +64,6 @@ def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     paths = list(options.values())
     captions = list(options.keys())
 
-    # 마지막 줄 빈칸 채우기
     remainder = len(paths) % per_row
     if remainder != 0:
         blank_img = str(Path("data/blank.png"))
@@ -72,26 +71,41 @@ def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
             paths.append(Path(blank_img))
             captions.append("")
 
-    # 이미지 선택
     selected_path = image_select(
         label="",
         images=[str(p) for p in paths],
         captions=captions,
     )
 
-    # 같은 이미지 클릭 시 해제
+    # 토글 선택
     if selected_path == st.session_state.last_selected_path:
         st.session_state.last_selected_path = None
         return None
     else:
         st.session_state.last_selected_path = selected_path
 
-    # 선택된 이미지가 blank.png가 아닐 때만 반환
+    # 체크 표시 HTML
     if selected_path and Path(selected_path).name != "blank.png":
-        name = captions[paths.index(Path(selected_path))]
+        idx = paths.index(Path(selected_path))
+        name = captions[idx]
+
+        st.markdown(
+            f"""
+            <div style="position:relative; display:inline-block;">
+                <img src="data:image/png;base64,{base64.b64encode(open(paths[idx], "rb").read()).decode()}" style="width:100%;">
+                <div style="position:absolute; top:5px; right:5px; background-color:rgba(0,0,0,0.6);
+                            color:white; border-radius:50%; width:30px; height:30px;
+                            display:flex; align-items:center; justify-content:center;
+                            font-size:18px;">✓</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
         speak(f"{name} 선택")
         return name
     return None
+
 
 
 def select_one_by_image_noempty(label: str, options: dict[str, Path]):
