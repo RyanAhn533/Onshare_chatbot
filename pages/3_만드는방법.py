@@ -2,7 +2,7 @@ from pathlib import Path
 from PIL import Image
 import streamlit as st
 from utils.ui import speak
-from base_recipes import BASE_RECIPES  # BASE_RECIPES 모듈 임포트
+from recipe_templates import BASE_RECIPES  # BASE_RECIPES 모듈 임포트
 
 # ── 페이지 설정 ─────────────────────────────
 st.set_page_config(page_title="④ 요리 도우미", page_icon="👩‍🍳")
