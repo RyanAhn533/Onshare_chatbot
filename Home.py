@@ -39,6 +39,36 @@ tool_imgs = {
 }
 selected_tools = select_one_by_image("사용할 도구를 골라 주세요", tool_imgs)
 
+# ── 사이드바에 현재까지 선택된 도구 표시 ───────────────────────
+with st.sidebar:
+    st.markdown(
+        "<h2 style='font-size:1.6em; font-weight:bold;'>🛠 현재까지 선택된 도구</h2>",
+        unsafe_allow_html=True
+    )
+
+    if selected_tools:
+        st.markdown(
+            """
+            <div style='background-color:#e3f2fd; padding:12px; border-radius:10px;
+                        border:2px solid #1976d2; box-shadow: 2px 2px 6px rgba(0,0,0,0.2);'>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            f"""
+            <div style='background-color:#bbdefb; height:32px; 
+                        border-radius:15px; font-weight:bold; color:#0d47a1;
+                        width:80%; margin:6px auto;
+                        display:flex; justify-content:center; align-items:center;'>
+                {selected_tools}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.info("아직 선택된 도구가 없습니다.")
+
 # 3) 이동 버튼
 col1, col2, _ = st.columns([1, 1, 4])
 with col1:
