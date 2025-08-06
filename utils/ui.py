@@ -52,17 +52,7 @@ def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     if selected_path and Path(selected_path).name != "blank.png":
         idx = paths.index(Path(selected_path))
         name = captions[idx]
-
-        border_style = "5px solid red"
-        st.markdown(
-            f"""
-            <div style="position:relative; display:inline-block; border:{border_style}; border-radius:10px;">
-                <img src="data:image/png;base64,{base64.b64encode(open(paths[idx], "rb").read()).decode()}" style="width:100%; border-radius:10px;">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
         speak(f"{name} 선택")
         return name
+
     return None
