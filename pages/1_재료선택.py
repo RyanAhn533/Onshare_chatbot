@@ -69,11 +69,22 @@ selected_ing = select_one_by_image(
 )
 
 # 선택한 재료 누적 저장
+# 선택한 재료 누적 저장
 if selected_ing and selected_ing not in st.session_state.selected_ingredients:
     st.session_state.selected_ingredients.append(selected_ing)
 
-# 현재까지 선택된 재료 표시
-st.write("현재까지 선택된 재료:", st.session_state.selected_ingredients)
+# 현재까지 선택된 재료 표시 (태그 스타일)
+if st.session_state.selected_ingredients:
+    tags_html = " ".join(
+        [
+            f"<span style='background-color:#f0f0f0; color:#333; padding:6px 12px; "
+            f"border-radius:15px; margin:4px; display:inline-block;'>{item}</span>"
+            for item in st.session_state.selected_ingredients
+        ]
+    )
+    st.markdown(f"**현재까지 선택된 재료:**<br>{tags_html}", unsafe_allow_html=True)
+else:
+    st.info("아직 선택된 재료가 없습니다.")
 
 # 버튼
 col1, col2 = st.columns(2)

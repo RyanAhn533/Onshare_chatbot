@@ -55,11 +55,19 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
 
 # ── 단일 선택: image_select 기본 사용 ──────────────────────────────
 
-def select_one_by_image(label: str, options: dict[str, Path]):
+def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     st.write(f"#### {label}")
 
     paths = list(options.values())
     captions = list(options.keys())
+
+    # 마지막 줄이 비면 투명 이미지로 채움
+    remainder = len(paths) % per_row
+    if remainder != 0:
+        blank_img = str(Path("data/blank.png"))  # 투명 PNG 하나 준비
+        for _ in range(per_row - remainder):
+            paths.append(Path(blank_img))
+            captions.append("")
 
     selected_path = image_select(
         label="",
@@ -67,11 +75,12 @@ def select_one_by_image(label: str, options: dict[str, Path]):
         captions=captions,
     )
 
-    if selected_path:
+    if selected_path and Path(selected_path).name != "blank.png":
         name = captions[paths.index(Path(selected_path))]
         speak(f"{name} 선택")
         return name
     return None
+
 
 
 # ── 제어 패널: 단일 선택처럼 사용 후 콜백 호출 ───────────────────────
