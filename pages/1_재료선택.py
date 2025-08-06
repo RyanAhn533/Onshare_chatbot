@@ -1,4 +1,3 @@
-# pages/1_재료선택.py
 import streamlit as st
 from utils.ui import select_one_by_image, speak
 from pathlib import Path
@@ -72,15 +71,18 @@ if "selected_ingredients" not in st.session_state:
     st.session_state.selected_ingredients = []
 
 # ── 재료 선택 (토글) ─────────────────────────────────────
-selected_ing = select_one_by_image("재료를 선택하세요", ing_imgs)
+selected_ing = select_one_by_image(
+    label="재료를 선택하세요",
+    options=ing_imgs,
+)
 
 if selected_ing:
     if selected_ing in st.session_state.selected_ingredients:
-        st.session_state.selected_ingredients.remove(selected_ing)
+        st.session_state.selected_ingredients.remove(selected_ing)  # 이미 있으면 제거
     else:
-        st.session_state.selected_ingredients.append(selected_ing)
+        st.session_state.selected_ingredients.append(selected_ing)  # 없으면 추가
 
-# ── 오른쪽 사이드바에 선택된 재료 표시 ─────────────────────
+# ── 오른쪽 사이드바에 선택된 재료 표시 ─────────────────────────────
 with st.sidebar:
     st.markdown(
         "<h2 style='font-size:1.6em; font-weight:bold;'>🛒 현재까지 선택된 재료</h2>",
@@ -88,6 +90,7 @@ with st.sidebar:
     )
 
     if st.session_state.selected_ingredients:
+        # 카드 박스
         st.markdown(
             """
             <div style='background-color:#fff8e1; padding:12px; border-radius:10px;
@@ -95,6 +98,8 @@ with st.sidebar:
             """,
             unsafe_allow_html=True
         )
+
+        # 재료 칩
         for item in st.session_state.selected_ingredients:
             st.markdown(
                 f"""
@@ -107,16 +112,19 @@ with st.sidebar:
                 """,
                 unsafe_allow_html=True
             )
+
         st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.info("아직 선택된 재료가 없습니다.")
+
+
 
 # ── 네비게이션 버튼 ────────────────────────────────────
 col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("⬅️ 이전 단계"):
-        st.switch_page("pages/0_시작화면.py")
+        st.switch_page("pages/0_시작화면.py")  # 필요 시 경로 수정
 
 with col2:
     if st.button("재료 초기화"):
@@ -127,4 +135,4 @@ with col3:
         if not st.session_state.selected_ingredients:
             st.warning("재료를 최소 한 개 이상 선택해주세요.")
         else:
-            st.switch_page("pages/2_메뉴추천.py")
+            st.switch_page("pages/2_메뉴선택.py")
