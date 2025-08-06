@@ -1,8 +1,10 @@
+# pages/2_메뉴추천.py
 import streamlit as st
 from pathlib import Path
 from utils.ui import select_one_by_image, speak
 from utils.gpt_helper import ask_gpt
 
+# ── 페이지 설정 ─────────────────────────────────────
 st.set_page_config(page_title="③ 메뉴 추천", page_icon="🍽️")
 st.markdown("""
     <div style='text-align: center; margin-top: -40px; margin-bottom: 30px;'>
@@ -14,15 +16,15 @@ st.subheader("③ 만들 수 있는 요리를 골라 주세요")
 speak("오늘 만들 메뉴를 하나 골라 주세요.")
 
 ingredients = st.session_state.get("selected_ingredients", [])
-tools = st.session_state.get("selected_tools", [])
-hand = st.session_state.get("hand_status", "양손")
+tools       = st.session_state.get("selected_tools", [])
+hand        = st.session_state.get("hand_status", "깨끗해요")
 
 if not ingredients or not tools:
     st.error("이전 단계에서 선택한 재료와 도구 정보가 없습니다. 처음부터 다시 진행해 주세요.")
     st.stop()
 
+# ── GPT 프롬프트 ────────────────────────────────────
 system_prompt = """다음은 요리 이름과 해당 요리를 만들기 위해 꼭 필요한 재료 목록이야:
-
 - 간장계란밥: 계란, 밥, 간장
 - 계란후라이: 계란, 기름
 - 라면: 라면
@@ -40,7 +42,6 @@ system_prompt = """다음은 요리 이름과 해당 요리를 만들기 위해 
 2. 왜 그 요리를 추천했는지 재료 관점에서 짧게 설명해줘.
 3. 너무 길게 설명하거나 잡담하지 말고, 핵심만 말해.
 """
-
 user_prompt = f"내가 가진 재료는 {', '.join(ingredients)}야. 어떤 요리를 만들 수 있어?"
 
 with st.spinner("GPT가 가능한 요리를 생각 중이에요..."):
@@ -53,7 +54,7 @@ with st.spinner("GPT가 가능한 요리를 생각 중이에요..."):
 st.markdown("#### 🍳 요리용 챗봇 온쿡 추천 결과")
 st.markdown(gpt_response)
 
-# 메뉴 이미지 상대경로 지정
+# ── 메뉴 이미지 ──────────────────────────────────────
 base_path = Path("data/menu")
 menu_imgs = {
     "간장계란밥": base_path / "간장계란밥.png",
@@ -70,19 +71,17 @@ menu_imgs = {
     "들기름막국수": base_path / "들기름막국수.png",
 }
 
-menu = select_one_by_image(
-    "메뉴를 선택하세요",
-    options=menu_imgs
-)
+menu = select_one_by_image("메뉴를 선택하세요", menu_imgs)
 
+# ── 네비게이션 버튼 ──────────────────────────────────
 col1, col2 = st.columns(2)
 
 with col1:
     if st.button("⬅️ 이전 단계"):
-        st.switch_page("pages/1_재료선택.py")  # 이전 단계 페이지 경로로 수정
+        st.switch_page("pages/1_재료선택.py")
 
 with col2:
     if menu and st.button("요리 시작하기 ▶️"):
-        st.session_state["menu"] = menu
+        st.session_state["menu"]         = menu
         st.session_state["gpt_response"] = gpt_response
         st.switch_page("pages/3_만드는방법.py")

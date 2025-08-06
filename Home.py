@@ -1,3 +1,4 @@
+# pages/0_손씻기_도구선택.py
 import streamlit as st
 from utils.ui import select_one_by_image, select_one_by_image_noempty, speak
 from pathlib import Path
@@ -23,6 +24,7 @@ hand_imgs = {
     "손 더러워요": Path("data/hand/dirty.png"),
 }
 hand_status = select_one_by_image_noempty("손을 씻었나요?", hand_imgs)
+st.session_state["hand_status"] = hand_status
 
 # ── 도구 이미지 사전 ───────────────────────────────
 base_path = Path("data/tools")
@@ -101,4 +103,4 @@ with col3:
         if not st.session_state.selected_tools:
             st.warning("도구를 최소 한 개 이상 선택해주세요.")
         else:
-            switch_page("pages/1_재료선택.py")
+            switch_page("1_재료선택.py")
