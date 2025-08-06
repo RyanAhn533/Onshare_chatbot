@@ -8,10 +8,14 @@ from recipe_templates import BASE_RECIPES
 st.set_page_config(page_title="④ 요리 도우미", page_icon="👩‍🍳")
 
 # ── 세션 정보 가져오기 ─────────────────────
-menu        = st.session_state.get("menu")  # 이미지 이름 그대로 넘어옴
+menu        = st.session_state.get("menu")  # ← 앞단에서 클릭한 메뉴명 그대로 들어옴
 ingredients = st.session_state.get("selected_ingredients", [])
 tools       = st.session_state.get("selected_tools", [])
 hand        = st.session_state.get("hand_status", "깨끗해요")
+
+# 메뉴명 정제 (콜론 앞부분만, 좌우 공백 제거)
+if menu:
+    menu = menu.split(":")[0].strip()
 
 # 메뉴 없을 때 예외 처리
 if not menu:
@@ -38,7 +42,7 @@ def fetch_recipe():
         "step_idx": 0,
         "_spoken_idx": None,
     })
-    menu_img_path = Path("data/menu") / f"{menu}.png"
+    menu_img_path = Path("data/menu") / f"{menu}.png"  # ← 메뉴명으로 이미지 파일 찾기
     if menu_img_path.exists():
         st.image(Image.open(menu_img_path), caption=f"추천 메뉴: {menu}", use_container_width=True)
     else:
@@ -72,7 +76,7 @@ def on_again(): show_current_step()
 def on_stop():  st.session_state["step_idx"] = 1_000_000; show_current_step()
 
 # ── 메뉴 이미지 표시 ───────────────────────
-menu_img_path = Path("data/menu") / f"{menu}.png"
+menu_img_path = Path("data/menu") / f"{menu}.png"  # ← 메뉴명 기반 경로
 if menu_img_path.exists():
     st.image(Image.open(menu_img_path), caption=f"추천 메뉴: {menu}", use_container_width=True)
 
