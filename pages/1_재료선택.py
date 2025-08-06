@@ -2,20 +2,24 @@ import streamlit as st
 from utils.ui import select_one_by_image, speak
 from pathlib import Path
 
+# ── 페이지 설정 ──────────────────────────────────────────
 st.set_page_config(page_title="② 재료 선택", page_icon="🥕")
 
-st.markdown("""
+st.markdown(
+    """
     <div style='text-align: center; margin-top: -40px; margin-bottom: 30px;'>
         <h1>🍳 요리용 챗봇 온쿡</h1>
     </div>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
 
 st.subheader("② 집에 있는 재료를 선택해주세요")
 speak("집에 있는 재료 중 하나를 선택해 주세요.")
 
-# 재료 이미지
+# ── 재료 이미지 사전 ─────────────────────────────────────
 base_path = Path("data/ingredients")
-ing_imgs = {
+ing_imgs = {  # 이름: 이미지 경로
     "가지": base_path / "가지.png",
     "간장": base_path / "간장.png",
     "감자": base_path / "감자.png",
@@ -62,30 +66,32 @@ ing_imgs = {
     "후추": base_path / "후추.png",
 }
 
-# 세션 상태 초기화
+# ── 세션 상태 초기화 ────────────────────────────────────
 if "selected_ingredients" not in st.session_state:
     st.session_state.selected_ingredients = []
 
-# 재료 하나 선택
+# ── 재료 선택 (토글) ─────────────────────────────────────
 selected_ing = select_one_by_image(
     label="재료를 선택하세요",
-    options=ing_imgs
+    options=ing_imgs,
 )
 
-# 선택한 재료 토글 저장
 if selected_ing:
     if selected_ing in st.session_state.selected_ingredients:
         st.session_state.selected_ingredients.remove(selected_ing)  # 이미 있으면 제거
     else:
         st.session_state.selected_ingredients.append(selected_ing)  # 없으면 추가
 
-
-# 현재까지 선택된 재료 표시 (태그 스타일)
+# ── 선택된 재료 태그 표시 ───────────────────────────────
 if st.session_state.selected_ingredients:
     tags_html = " ".join(
         [
-            f"<span style='background-color:#f0f0f0; color:#333; padding:6px 12px; "
-            f"border-radius:15px; margin:4px; display:inline-block;'>{item}</span>"
+            (
+                "<span style='background-color:#f0f0f0; color:#333; "
+                "padding:6px 12px; border-radius:15px; margin:4px; "
+                "display:inline-block;'>"
+                f"{item}</span>"
+            )
             for item in st.session_state.selected_ingredients
         ]
     )
@@ -93,12 +99,12 @@ if st.session_state.selected_ingredients:
 else:
     st.info("아직 선택된 재료가 없습니다.")
 
-## 버튼
+# ── 네비게이션 버튼 ────────────────────────────────────
 col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("⬅️ 이전 단계"):
-        st.switch_page("pages/0_시작화면.py")  # 이전 단계 페이지 경로로 수정
+        st.switch_page("pages/0_시작화면.py")  # 필요 시 경로 수정
 
 with col2:
     if st.button("재료 초기화"):
