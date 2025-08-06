@@ -58,28 +58,52 @@ def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4)
 def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
     st.write(f"#### {label}")
 
+    # 세션 초기화
+    if "image_select_single" not in st.session_state:
+        st.session_state.image_select_single = None
+
+    selected_name = st.session_state.image_select_single
     paths = list(options.values())
     captions = list(options.keys())
 
-    # 마지막 줄이 비면 투명 이미지로 채움
     remainder = len(paths) % per_row
     if remainder != 0:
-        blank_img = str(Path("data/blank.png"))  # 투명 PNG 하나 준비
+        blank_img = str(Path("data/blank.png"))
         for _ in range(per_row - remainder):
             paths.append(Path(blank_img))
             captions.append("")
 
-    selected_path = image_select(
-        label="",
-        images=[str(p) for p in paths],
-        captions=captions,
-    )
+    # 버튼+이미지로 직접 구현 (image_select 대신)
+    for i in range(0, len(paths), per_row):
+        cols = st.columns(per_row)
+        for j, p in enumerate(paths[i:i+per_row]):
+            name = captions[i + j]
+            if not name:  # 빈 칸
+                cols[j].empty()
+                continue
 
-    if selected_path and Path(selected_path).name != "blank.png":
-        name = captions[paths.index(Path(selected_path))]
-        speak(f"{name} 선택")
-        return name
-    return None
+            is_selected = (name == selected_name)
+            border_color = "5px solid red" if is_selected else "2px solid transparent"
+
+            with cols[j]:
+                if st.button(f"{'✅ ' if is_selected else ''}{name}", key=f"btn_{name}"):
+                    if is_selected:
+                        st.session_state.image_select_single = None  # 선택 해제
+                    else:
+                        st.session_state.image_select_single = name
+                        speak(f"{name} 선택")
+
+                st.markdown(
+                    f"""
+                    <div style="border:{border_color}; border-radius:10px; padding:5px;">
+                        <img src="data:image/png;base64,{base64.b64encode(open(p, 'rb').read()).decode()}" style="width:100%; border-radius:8px;">
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+    return st.session_state.image_select_single
+
 
 def select_one_by_image_noempty(label: str, options: dict[str, Path]):
     st.write(f"#### {label}")

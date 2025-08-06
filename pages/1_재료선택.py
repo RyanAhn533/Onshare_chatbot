@@ -90,12 +90,18 @@ if st.session_state.selected_ingredients:
 else:
     st.info("아직 선택된 재료가 없습니다.")
 
-# 버튼
-col1, col2 = st.columns(2)
+## 버튼
+col1, col2, col3 = st.columns(3)
+
 with col1:
+    if st.button("⬅️ 이전 단계"):
+        st.switch_page("pages/0_시작화면.py")  # 이전 단계 페이지 경로로 수정
+
+with col2:
     if st.button("재료 초기화"):
         st.session_state.selected_ingredients = []
-with col2:
+
+with col3:
     if st.button("다음 단계 ➡️"):
         if not st.session_state.selected_ingredients:
             st.warning("재료를 최소 한 개 이상 선택해주세요.")

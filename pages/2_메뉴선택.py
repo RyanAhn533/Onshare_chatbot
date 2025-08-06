@@ -75,7 +75,14 @@ menu = select_one_by_image(
     options=menu_imgs
 )
 
-if menu and st.button("요리 시작하기 ▶️"):
-    st.session_state["menu"] = menu
-    st.session_state["gpt_response"] = gpt_response
-    st.switch_page("pages/3_만드는방법.py")
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("⬅️ 이전 단계"):
+        st.switch_page("pages/1_재료선택.py")  # 이전 단계 페이지 경로로 수정
+
+with col2:
+    if menu and st.button("요리 시작하기 ▶️"):
+        st.session_state["menu"] = menu
+        st.session_state["gpt_response"] = gpt_response
+        st.switch_page("pages/3_만드는방법.py")
