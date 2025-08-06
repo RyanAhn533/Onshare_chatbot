@@ -124,7 +124,7 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("⬅️ 이전 단계"):
-        st.switch_page("pages/0_시작화면.py")  # 필요 시 경로 수정
+        st.switch_page("pages/Home.py")  # 필요 시 경로 수정
 
 with col2:
     if st.button("재료 초기화"):
