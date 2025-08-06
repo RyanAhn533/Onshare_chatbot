@@ -6,7 +6,7 @@ import streamlit as st
 def switch_page(page_name: str):
     from streamlit_extras.switch_page_button import switch_page as sp
     sp(page_name)
-    
+
 # ── TTS: 브라우저 Web Speech API 사용 ────────────────────────
 def speak(text: str):
     """TTS wrapper (uses the browser's Web Speech API)."""
@@ -28,26 +28,19 @@ def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
 
     if "last_selected_path" not in st.session_state:
         st.session_state.last_selected_path = None
+    if "selected_menu" not in st.session_state:
+        st.session_state.selected_menu = None
 
     paths = list(options.values())
     captions = list(options.keys())
 
+    # 빈 칸 채우기
     remainder = len(paths) % per_row
     if remainder != 0:
         blank_img = str(Path("data/blank.png"))
         for _ in range(per_row - remainder):
             paths.append(Path(blank_img))
             captions.append("")
-
-    # CSS: 선택된 이미지에 테두리 표시
-    st.markdown("""
-        <style>
-        div[data-testid="stImage"] img[data-selected="true"] {
-            border: 5px solid red !important;
-            border-radius: 10px;
-        }
-        </style>
-    """, unsafe_allow_html=True)
 
     # 이미지 선택
     selected_path = image_select(
@@ -56,18 +49,25 @@ def select_one_by_image(label: str, options: dict[str, Path], per_row: int = 4):
         captions=captions,
     )
 
-    # 토글
+    # blank는 무시
+    if not selected_path or Path(selected_path).name == "blank.png":
+        return st.session_state.selected_menu
+
+    # 토글 처리
     if selected_path == st.session_state.last_selected_path:
+        # 선택 해제
         st.session_state.last_selected_path = None
+        st.session_state.selected_menu = None
         return None
     else:
+        # 새 선택
         st.session_state.last_selected_path = selected_path
-        if selected_path and Path(selected_path).name != "blank.png":
-            idx = paths.index(Path(selected_path))
-            name = captions[idx]
-            speak(f"{name} 선택")
-            return name
-    return None
+        idx = paths.index(Path(selected_path))
+        name = captions[idx]
+        st.session_state.selected_menu = name
+        speak(f"{name} 선택")
+        return name
+
 
 
 def multiselect_by_image(label: str, options: dict[str, Path], per_row: int = 4):
