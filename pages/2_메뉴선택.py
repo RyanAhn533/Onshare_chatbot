@@ -57,10 +57,10 @@ with st.spinner("GPT가 가능한 요리를 생각 중이에요..."):
 st.markdown("#### 🍳 요리용 챗봇 온쿡 추천 결과")
 st.markdown(gpt_response)
 
-# ── GPT 추천에서 첫 번째 메뉴 추출 → 기본값으로 menu 저장 ─
+# ── GPT 응답에서 첫 번째 메뉴명만 추출 → 기본 menu 저장 ─
 first_line = gpt_response.split("\n")[0].strip()
-recommended_menu = first_line.split(":")[0].strip() if ":" in first_line else first_line
-st.session_state["menu"] = recommended_menu  # 기본값 저장
+menu_name_only = first_line.split(":")[0].strip() if ":" in first_line else first_line
+st.session_state["menu"] = menu_name_only  # 순수 메뉴명 저장
 
 # ── 메뉴 이미지 목록 ─────────────────────────────────
 base_path = Path("data/menu")
