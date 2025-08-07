@@ -83,10 +83,11 @@ def show_current_step():
         return
 
     st.markdown(f"""
-    <div style='background:#fff3cd;padding:12px;border-radius:8px;'>
-        <b>{idx + 1}/{len(steps)}단계</b><br>{steps[idx]}
-    </div>
-    """, unsafe_allow_html=True)
+<div style='background:#fff3cd;padding:12px;border-radius:8px; color:#333;'>
+    <b>{idx + 1}/{len(steps)}단계</b><br>{steps[idx]}
+</div>
+""", unsafe_allow_html=True)
+
 
     if st.session_state.get("_spoken_idx") != idx:
         speak(_sanitize_for_tts(steps[idx]))
